@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.List;
 
@@ -36,11 +37,11 @@ public class BankAutotest {
 
     @Test
    public void successfulCase() {
-//        ChromeOptions options = new ChromeOptions();
-//        options.addArguments("--disable-dev-shm-usage");
-//        options.addArguments("--no-sandbox");
-//        options.addArguments("--headless");
-//        driver = new ChromeDriver(options);
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--headless");
+        driver = new ChromeDriver(options);
 
         driver.get("http://localhost:9999/");
         List<WebElement> inputs = driver.findElements(By.tagName("input"));
@@ -56,10 +57,8 @@ public class BankAutotest {
     @Test
     public void successfulSecondCase(){
         driver.get("http://localhost:9999/");
-        List<WebElement> inputs = driver.findElements(By.tagName("input"));
-        inputs.get(0).sendKeys("Иванов Сергей");
-        inputs.get(1).sendKeys("+79113438790");
-        driver.findElement(By.cssSelector("[data-test-id=]"))
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Иванов-Смирнов Антон");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79313456825");
         driver.findElement(By.className("checkbox__text")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
