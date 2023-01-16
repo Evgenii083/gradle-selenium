@@ -25,7 +25,12 @@ public class BankAutotest {
 
     @BeforeEach
     void setUp(){
-        driver = new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--headless");
+        driver = new ChromeDriver(options);
+        driver.get("http://localhost:9999/");
     }
 
     @AfterEach
@@ -37,32 +42,25 @@ public class BankAutotest {
 
     @Test
    public void successfulCase() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--headless");
-        driver = new ChromeDriver(options);
 
-        driver.get("http://localhost:9999/");
-        List<WebElement> inputs = driver.findElements(By.tagName("input"));
-        inputs.get(0).sendKeys("Иванов Сергей");
-        inputs.get(1).sendKeys("+79113438790");
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Иванов Сергей");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79113438790");
         driver.findElement(By.className("checkbox__text")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
-        String actual = driver.findElement(By.className("Success_successBlock__2L3Cw")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id=order-success]" )).getText().trim();
         assertEquals(expected,actual);
     }
 
     @Test
     public void successfulSecondCase(){
-        driver.get("http://localhost:9999/");
+
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Иванов-Смирнов Антон");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79313456825");
         driver.findElement(By.className("checkbox__text")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.";
-        String actual = driver.findElement(By.className("Success_successBlock__2L3Cw")).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id=order-success]" )).getText().trim();
         assertEquals(expected,actual);
     }
 }
