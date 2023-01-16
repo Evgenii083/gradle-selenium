@@ -1,15 +1,14 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.Color;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -120,6 +119,16 @@ public class BankAutotest {
         String actual = spans.get(1).getText().trim();
         assertEquals(expected,actual);
     }
+    @Test
+    public void missedCheckBoxCase(){
+        driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Никулин Иван");
+        driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79992005529");
+        driver.findElement(By.className("button__content")).click();
+        WebElement t = driver.findElement(By.cssSelector("[data-test-id=agreement]"));
+        String s = t.getCssValue("color");
+        String c = Color.fromString(s).asHex();
 
+        Assertions.assertTrue(c.equals("#ff5c5c"));
+    }
 }
 
