@@ -2,13 +2,9 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.Color;
 
-import java.util.List;
-import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -65,70 +61,78 @@ public class BankAutotest {
 
     @Test
     public void emptyFormCase() {
-        List<WebElement> spans = driver.findElements(By.className("input__sub"));
+
         driver.findElement(By.className("checkbox__text")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Поле обязательно для заполнения";
-        String actual = spans.get(0).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void emptyNameCase() {
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79993334422");
+        driver.findElement(By.className("checkbox__text")).click();
+        driver.findElement(By.className("button__content")).click();
+        String expected = "Поле обязательно для заполнения";
+        String actual = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
         assertEquals(expected, actual);
     }
 
     @Test
     public void emptyPhoneCase() {
-        List<WebElement> spans = driver.findElements(By.className("input__sub"));
+
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Смирнов Илья");
-//        driver.findElement(By.className("checkbox__text")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Поле обязательно для заполнения";
-        String actual = spans.get(1).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
         assertEquals(expected, actual);
     }
 
     @Test
     public void englishInputCase() {
-        List<WebElement> spans = driver.findElements(By.className("input__sub"));
+
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Forest Gump");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79992005522");
         driver.findElement(By.className("checkbox__text")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы.";
-        String actual = spans.get(0).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText().trim();
         assertEquals(expected, actual);
     }
 
     @Test
     public void wrongPhoneFormatCase() {
-        List<WebElement> spans = driver.findElements(By.className("input__sub"));
+
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Никулин Иван");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("89992005522");
         driver.findElement(By.className("checkbox__text")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
-        String actual = spans.get(1).getText().trim();
+        String actual = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
         assertEquals(expected, actual);
     }
 
     @Test
-    public void wrongPhoneFormatCase2(){
-        List<WebElement> spans = driver.findElements(By.className("input__sub"));
+    public void wrongPhoneFormatCase2() {
+
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Никулин Иван");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+7999200552");
         driver.findElement(By.className("checkbox__text")).click();
         driver.findElement(By.className("button__content")).click();
         String expected = "Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.";
-        String actual = spans.get(1).getText().trim();
-        assertEquals(expected,actual);
+        String actual = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
+        assertEquals(expected, actual);
     }
+
     @Test
-    public void missedCheckBoxCase(){
+    public void missedCheckBoxCase() {
         driver.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Никулин Иван");
         driver.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79992005529");
         driver.findElement(By.className("button__content")).click();
-        WebElement t = driver.findElement(By.cssSelector("[data-test-id=agreement]"));
-        String s = t.getCssValue("color");
-        String c = Color.fromString(s).asHex();
-
-        Assertions.assertTrue(c.equals("#ff5c5c"));
+        String expected = "Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй";
+        String actual = driver.findElement(By.cssSelector("[data-test-id='agreement'].input_invalid .checkbox__text")).getText().trim();
+        assertEquals(expected, actual);
     }
 }
 
